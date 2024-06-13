@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,8 +6,119 @@
     <meta meta name="viewport" content="width=device-width, user-scalable=no" />
     <title>Helpdesk</title>
 </head>
-<link rel="stylesheet" type="text/css" href="style.css?v=1" />
+<link rel="stylesheet" type="text/css" href="style.css?v=2" />
 <script src="script.js"></script>
+<script>
+    // Function to retrieve the value of a cookie by its name
+    function getCookie(cookieName) {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Check if the cookie starts with the desired name
+            if (cookie.startsWith(cookieName + '=')) {
+                return cookie.substring(cookieName.length + 1);
+            }
+        }
+        return null; // Return null if cookie not found
+    }
+
+    // Check if the cookie 'user' exists
+    var cookieValue = getCookie('user');
+
+    // If the cookie value is "active", continue, else redirect to the login page
+    if (cookieValue === "active") {
+        // Retrieve the username from the cookie
+        const username = getCookie('username');
+
+        // Check if the username exists
+        if (username) {
+            // Send a request to the API to get the login count
+            fetch('https://arambhsoftech.com/Helpdesk/user_check.php?username=' + encodeURIComponent(username))
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Data from user_check.php:', data); // Log the data returned from user_check.php
+                    // Check if login count is greater than 5
+                    if (data.login_count > 5) {
+                        console.log('Login count is greater than 5'); // Log that login count is greater than 5
+                        // Check if the "reviewed" cookie exists and its value is true
+                        const reviewed = getCookie('reviewed');
+                        if (reviewed !== "true") {
+                            console.log('Redirecting to review.html'); // Log that redirection to review.html is happening
+                            // Redirect to the review page if the "reviewed" cookie is not set to true
+                            window.location.href = "review.html";
+                        } else {
+                             // Prepare the data to be sent to the API
+                             const data = { username: username };
+
+                             // Send the data to the API endpoint
+                             fetch('https://arambhsoftech.com/Helpdesk/Helpdesk_login.php?username=' + encodeURIComponent(username), {
+                                 method: 'POST',
+                                 headers: {
+                                     'Content-Type': 'application/json'
+                                 },
+                                 body: JSON.stringify(data)
+                             })
+                             .then(response => response.json())
+                             .then(data => {
+                                 console.log('Response from Helpdesk_login.php:', data); // Log the response from Helpdesk_login.php
+                                 // Continue with further actions if needed
+                             })
+                             .catch(error => {
+                                 console.error('Error from Helpdesk_login.php:', error); // Log any errors from Helpdesk_login.php
+                                 // Handle errors if needed
+                             });
+                           
+                        }
+                    } else {
+                         // Prepare the data to be sent to the API
+                         const data = { username: username };
+
+                         // Send the data to the API endpoint
+                         fetch('https://arambhsoftech.com/Helpdesk/Helpdesk_login.php?username=' + encodeURIComponent(username), {
+                             method: 'POST',
+                             headers: {
+                                 'Content-Type': 'application/json'
+                             },
+                             body: JSON.stringify(data)
+                         })
+                         .then(response => response.json())
+                         .then(data => {
+                             console.log('Response from Helpdesk_login.php:', data); // Log the response from Helpdesk_login.php
+                             // Continue with further actions if needed
+                         })
+                         .catch(error => {
+                             console.error('Error from Helpdesk_login.php:', error); // Log any errors from Helpdesk_login.php
+                             // Handle errors if needed
+                         });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error from user_check.php:', error); // Log any errors from user_check.php
+                    // Handle errors if needed
+                });
+        } else {
+            console.log('Username not found in cookie'); // Log if username not found in cookie
+            // Redirect to the login page
+            window.location.href = "login.html";
+        }
+    } else {
+        // Redirect to the login page
+        window.location.href = "login.html";
+    }
+</script>
+
+
+    
+<script>
+    window.onload = function() {
+        
+    };
+</script>
 <script
 	src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
 	integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
@@ -19,6 +130,7 @@
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript">
+    
   $(document).ready(function() {
     if (window.location.href.indexOf("daa_viva") > -1) {
         location.href = 'json/daa_viva.json';
@@ -58,31 +170,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"/>
   </div>
 </div>
-<script>function onloading(){
-    var cookieString = document. cookie;
-    var cookies = cookieString. split(';');
-    var len = cookies. length;
-    var foundActiveUser = false;
-    for(i=0; i<len; i++){
-        var n = cookies[i].split("=");
-        for(j=0; j<2; j++){
 
-        if(n[j]===" name"){
-         //   alert("Welcome Back "+n[1]);
-            wishme(n[1]);
-        break;
-        }}
-       
-    }
-   }
-   function wishme(name){
-        document.getElementById("wishing_part").innerHTML="<b>Welcome Back "+ name+"</b>";
-       
-      
-        
-   }
-</script>
-<body onload="onloading()">  
+<body >  
     <script>
        
 
@@ -153,9 +242,11 @@
                     <li><a class="nav-link dropdown-item" href="math.html">Mathematics</a></li>     
                     <li><a class="nav-link dropdown-item" href="archi_lab.html">Comp. Architecture Lab</a></li>
                     <li><a class="nav-link dropdown-item" href="web_tech_lab.html">Web Technologies Lab</a></li>
-                    <li><a class="nav-link dropdown-item" href="os_lab.html">OS Lab</a></li>     
+                    <li><a class="nav-link dropdown-item" href="os_lab.html">OS Lab</a></li>    
+                    <li><a class="nav-link dropdown-item" href="startup.html">Startup</a></li>   
                 </ul>
                 <li><a class="nav-link dropdown-item" href="contributers.html"><center>Our Valuable Contributers</center></a></li>
+                <li><a class="nav-link dropdown-item" href="Admin.html"><center>Admin Portal</center></a></li>
                 </ul>
               </li>
             </ul>
@@ -165,13 +256,17 @@
       
       
 <div id="body">
-   
+   <div id="watermark">@Debuggers</div>
+   <center><div id="wishing_part">Welcome</div></center>
+   <hr>
  <!-- <marquee><a href="https://bit.ly/47pIBam">Mathematics assignment </a> -->
     <!-- <a href="https://bit.ly/group_debuggers">Joint us <i class="fa fa-whatsapp" style="color: #45a049;" aria-hidden="true"></i></a> -->
 <!-- </marquee> -->
 
-<!-- <a href="sanskrit.html">Sanskrit Important</a>&nbsp;<a href="mech_mcq.html">Assignment Questions DAA</a> -->
-<!-- <hr> -->
+<a href="python_notes.html">Python Viva Important</a>&nbsp;
+<a href="join.html">Join Us</a>&nbsp;
+<!-- <a href="mech_mcq.html">Assignment Questions DAA</a>  -->
+ <hr>
  
 <body>
     <center><h1>Database Managment Systems Viva Questions</h1></center>
@@ -292,55 +387,8 @@
     }
 </style>
 </head>
-<!-- <div id="main">
-    <div id="box">
-        <div id="right" onclick="close1()">
-            <i class="fa fa-times" aria-hidden="true"></i>
-        </div> 
-         <div><blink id="heading_tag">
-           Your Feedback is expensive for us
-         </blink></div>
-        <form action="https://sheetdb.io/api/v1/g61yskkf7kixl" method="post" id="sheetdb-form">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="data[name]" required>
-
-            <label for="feedback">Feedback:</label>
-            <textarea id="feedback" name="data[Feedback]" rows="4" required></textarea>
-
-            <input type="submit" value="Submit" onclick="close1()">
-        </form>
-    </div>
-</div>
-<div id="loginactive" style="display: none;">
-    <form action="https://sheetdb.io/api/v1/o3nxu9n6otryl" method="post" id="logindb">
-        <input type="text" id="user" name="data[username]">
-        <input type="text" name="data[time]" id="time">
-        <input type="submit" name="subme" id="subme">
-    </form>
-</div> -->
 <script>
-    var form = document.getElementById('sheetdb-form');
-form.addEventListener("submit", e => {
-  e.preventDefault();
-  fetch(form.action, {
-      method : "POST",
-      body: new FormData(document.getElementById("sheetdb-form")),
-  }).then(
-      response => response.json()
-  ).then((html) => {
-    close1();
-    document.cookie = "user=active";
-    document.cookie = "name="+document.getElementById("name").value;
-
-  });
-});
-
-if (!invis) {
-    document.getElementById("main").style.display = "none";
-}
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {debugger;
+    document.addEventListener('DOMContentLoaded', function () {
         var currentDate = new Date();
 
         // Display current date and time
@@ -370,6 +418,7 @@ if (!invis) {
             if (n[0] === "name") {
                 // Set values in the form
                 document.getElementById("user").value = n[1];
+               
                 userset = true;
                 break;
             }
@@ -412,6 +461,30 @@ if (!invis) {
         var submitButton = document.getElementById('subme');
         submitButton.click();
     });
+    var username = getCookie("username");
+    wishme(username);
+    
+    function wishme(username){
+        document.getElementById("wishing_part").innerHTML="<b>Welcome Back "+ username+"</b>";
+    }
+    function suspension(user) {
+        // Fetch the JSON file
+        fetch('json/suspend.json')
+        .then(response => response.json())
+        .then(data => {
+            // Check if the user is in the suspendedUsers array
+            if (data.suspendedUsers.includes(user)) {
+                window.location.href = "no_user.html";
+                // Redirect or perform other actions as needed
+            } 
+        })
+        .catch(error => {
+            console.error('Error fetching the JSON file:', error);
+        });
+    }
+suspension(username);
+    
+    
 </script>
 
 </body>
